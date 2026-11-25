@@ -1,8 +1,4 @@
-"""Generate figures for the README.
-
-Figure 1: Newton convergence — how the error shrinks with each iteration.
-Figure 2: Implied vol smile — recovery of a synthetic vol smile from prices.
-"""
+"Generate figures for the README."
 
 from __future__ import annotations
 
@@ -18,7 +14,7 @@ def figure_newton_convergence() -> None:
     S, K, T, r, true_sigma = 100, 100, 1.0, 0.05, 0.3
     mkt_price = bs_price(S, K, T, r, true_sigma, "call")
 
-    sigma = 0.5   # deliberately bad initial guess
+    sigma = 0.5
     errors = []
     for _ in range(12):
         price = bs_price(S, K, T, r, sigma, "call")
@@ -45,14 +41,10 @@ def figure_vol_smile() -> None:
     S, T, r = 100, 0.5, 0.05
     strikes = np.linspace(70, 130, 25)
 
-    # Synthetic smile: vol is higher for OTM puts (low K) and OTM calls (high K).
-    # A simple quadratic smile centered at ATM.
-    true_vols = 0.20 + 0.002 * (strikes - 100)**2 / 100
+    true_vols = 0.20 + 0.002 * (strikes - 100) ** 2 / 100
 
-    # Generate "market prices" from the smile.
     prices = [bs_price(S, K, T, r, sig, "call") for K, sig in zip(strikes, true_vols)]
 
-    # Recover implied vols.
     recovered = []
     for K, price in zip(strikes, prices):
         result = implied_vol(price, S, K, T, r, "call")
@@ -60,8 +52,14 @@ def figure_vol_smile() -> None:
 
     fig, ax = plt.subplots(figsize=(9, 6))
     ax.plot(strikes, true_vols * 100, "o-", label="True vol (input)", markersize=6)
-    ax.plot(strikes, np.array(recovered) * 100, "s--", label="Recovered implied vol",
-            markersize=5, alpha=0.8)
+    ax.plot(
+        strikes,
+        np.array(recovered) * 100,
+        "s--",
+        label="Recovered implied vol",
+        markersize=5,
+        alpha=0.8,
+    )
     ax.set_xlabel("Strike K")
     ax.set_ylabel("Implied volatility (%)")
     ax.set_title("Volatility smile: true vs recovered")

@@ -1,4 +1,5 @@
 """Tests for the implied volatility solver."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -7,8 +8,6 @@ import pytest
 from src.bs import bs_price, bs_vega
 from src.solver import implied_vol, implied_vol_newton, implied_vol_brent
 
-
-# ---- Black-Scholes sanity checks ----
 
 def test_atm_call_positive():
     assert bs_price(100, 100, 1.0, 0.05, 0.2, "call") > 0
@@ -29,8 +28,6 @@ def test_vega_positive():
 def test_vega_near_zero_for_deep_otm():
     assert bs_vega(100, 200, 0.01, 0.05, 0.1) < 1e-6
 
-
-# ---- Newton-Raphson ----
 
 @pytest.mark.parametrize("true_sigma", [0.05, 0.10, 0.20, 0.40, 0.80])
 def test_newton_recovers_known_vol(true_sigma):
@@ -56,8 +53,6 @@ def test_newton_few_iterations():
     assert result.iterations <= 10
 
 
-# ---- Brent fallback ----
-
 @pytest.mark.parametrize("true_sigma", [0.05, 0.50, 1.00])
 def test_brent_recovers_known_vol(true_sigma):
     S, K, T, r = 100, 100, 1.0, 0.05
@@ -74,8 +69,6 @@ def test_brent_handles_extreme_otm():
     assert result.converged
     assert abs(result.sigma - 0.3) < 1e-4
 
-
-# ---- Combined solver ----
 
 def test_combined_atm_call():
     mkt = bs_price(100, 100, 1.0, 0.05, 0.25, "call")
