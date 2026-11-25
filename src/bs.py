@@ -1,8 +1,4 @@
-"""Black-Scholes pricing and Greeks needed for the implied-vol solver.
-
-We need the price (to evaluate the objective) and vega (to drive Newton-
-Raphson). Both are standard closed-form results.
-"""
+"Black-Scholes pricing and Greeks needed for the implied-vol solver."
 
 from __future__ import annotations
 
@@ -11,7 +7,11 @@ from scipy.stats import norm
 
 
 def bs_price(
-    S: float, K: float, T: float, r: float, sigma: float,
+    S: float,
+    K: float,
+    T: float,
+    r: float,
+    sigma: float,
     option_type: str = "call",
 ) -> float:
     """Black-Scholes price for a European call or put."""
@@ -29,13 +29,7 @@ def bs_price(
 
 
 def bs_vega(S: float, K: float, T: float, r: float, sigma: float) -> float:
-    """Vega: the derivative of the Black-Scholes price with respect to sigma.
-
-    Vega is the same for calls and puts (follows from put-call parity, since
-    the parity relation S - K*exp(-rT) doesn't depend on sigma).
-
-    This is the Jacobian that Newton-Raphson uses to find implied vol.
-    """
+    "Vega: the derivative of the Black-Scholes price with respect to sigma."
     if T <= 0 or sigma <= 0:
         return 0.0
 
