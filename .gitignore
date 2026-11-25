@@ -4,3 +4,11 @@ __pycache__/
 .pytest_cache/
 .vscode/
 .DS_Store
+
+# Local secrets and credentials
+.env
+.env.*
+!.env.example
+*credentials*
+*.pem
+*.key

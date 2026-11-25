@@ -1,4 +1,4 @@
-A synthetic quadratic volatility smile (higher implied vol for away-from-ATM strikes) is recovered exactly by the solver across the full strike range.
+A synthetic quadratic volatility smile (higher implied vol for away-from-ATM strikes) is recovered numerically by the solver for the tested strikes.
 
 ## Quick start
 
@@ -6,21 +6,21 @@ A synthetic quadratic volatility smile (higher implied vol for away-from-ATM str
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python -m src.solver         # demo: recover known vols from prices
-python -m src.make_figure    # regenerate the figures above
-pytest -v                    # ~15 tests
+python -m src.make_figure    # generate local comparison figures
+pytest -v                    # 18 tests in the cleanup run
 ```
 
 ## Verification
 
 The solver is tested against:
-- Known volatilities recovered to 1e-6 accuracy across σ ∈ [0.05, 1.0].
+- Known-volatility test cases between σ = 0.05 and 1.0 recovered within 1e-6 absolute error.
 - Put-call parity (BS call − put = S − K·e^{−rT}).
 - Vega positivity (a basic sanity check).
 - Deep OTM edge cases where Newton fails and Brent catches.
-- A full smile round-trip: generate prices from a quadratic smile, recover all vols.
+- A smile round-trip: generate prices from specified smile points and recover their vols within 1e-5 absolute error. The deep-OTM Brent case uses a 1e-4 tolerance.
 
 ## Notes and extensions
 
-This implementation handles vanilla European options under Black-Scholes. Natural extensions include: SABR or SVI parameterization of the smile surface (fitting σ(K,T) rather than solving pointwise), dividend-adjusted BS for equity options, and the Jaeckel (2015) "Let's Be Rational" method — which replaces Newton-Raphson with an initial approximation that's accurate to machine precision in ~2 iterations, eliminating the need for a fallback entirely. The Jaeckel method is what Bloomberg and most production systems use.
+This implementation handles vanilla European options under Black-Scholes. Possible extensions include fitting a parametric volatility surface and adding dividend-aware pricing.
 
-The vega-based Newton-Raphson approach implemented here is the standard teaching version and is the method most likely to appear in quant interviews.
+TODO: benchmark alternative solvers before making numerical iteration-count or comparative performance claims. No evidence for the previous alternative-solver speed or production-adoption claims is included in this repository.
